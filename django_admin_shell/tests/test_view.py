@@ -26,7 +26,8 @@ class ShellViewStatusTest(BVTest):
     url = reverse("django_admin_shell:shell")
 
     @override_settings(ADMIN_SHELL_ENABLE=False)
-    def test_enable(self):
+    def test_shell_is_disable(self):
         response = self.client.get(self.url)
         status = response.status_code
+        print(status, "XXXXXXXX")
         assert status == 404

@@ -1,6 +1,9 @@
 from django.views.generic import FormView
 from .forms import ShellForm
-from django.http import HttpResponseForbidden
+from django.http import (
+    HttpResponseForbidden,
+    HttpResponseNotFound
+)
 from django.conf import settings
 
 try:
@@ -73,7 +76,7 @@ class Shell(FormView):
             is_auth = request.user.is_authenticated
 
         if not ADMIN_SHELL_ENABLE:
-            return HttpResponseForbidden("Forbidden: Django admin shell is not enabled")
+            return HttpResponseNotFound("Not found: Django admin shell is not enabled")
         elif is_auth is False or request.user.is_staff is False:
             return HttpResponseForbidden("Forbidden: To access Django admin shell you must have access the admin site")
         elif ADMIN_SHELL_ONLY_DEBUG_MODE and settings.DEBUG is False:
