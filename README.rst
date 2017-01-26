@@ -16,6 +16,11 @@ Project not finish yet.
 - Not full tested yet
 
 
+.. image:: ./doc/static/screen1.png
+    :alt: Admin Shell
+
+
+
 Install
 --------
 
