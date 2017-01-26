@@ -6,7 +6,7 @@ def from_settings_or_default(name, default):
     return getattr(settings, name, default)
 
 
-ADMIN_SHELL_ENABLE = from_settings_or_default('ADMIN_SHELL_ENABLE', False)
+ADMIN_SHELL_ENABLE = from_settings_or_default('ADMIN_SHELL_ENABLE', True)
 ADMIN_SHELL_ONLY_DEBUG_MODE = from_settings_or_default('ADMIN_SHELL_ONLY_DEBUG_MODE', True)
 ADMIN_SHELL_ONLY_FOR_SUPERUSER = from_settings_or_default('ADMIN_SHELL_ONLY_FOR_SUPERUSER', True)
 ADMIN_SHELL_OUTPUT_SIZE = from_settings_or_default('ADMIN_SHELL_OUTPUT_SIZE', 250)

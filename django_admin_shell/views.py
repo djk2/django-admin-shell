@@ -11,7 +11,7 @@ try:
 except:
     from StringIO import StringIO
 
-from .app_settings import (
+from .settings import (
     ADMIN_SHELL_SESSION_KEY,
     ADMIN_SHELL_OUTPUT_SIZE,
     ADMIN_SHELL_ENABLE,
