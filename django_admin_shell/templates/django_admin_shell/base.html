@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}
+    Django admin shell
+{% endblock %}
+
+{# Add bootstrap style #}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static "django_admin_shell/css/bootstrap3.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "django_admin_shell/js/linedtextarea/jquery-linedtextarea.css" %}"/>
+    <link rel="stylesheet" href="{% static "django_admin_shell/css/shell.css" %}"/>
+{% endblock %}
+
+{# Add jQuery style #}
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static "django_admin_shell/js/jquery.min.js" %}"></script>
+    <script src="{% static "django_admin_shell/js/linedtextarea/jquery-linedtextarea.js" %}"></script>
+    <script src="{% static "django_admin_shell/js/shell.min.js" %}"></script>
+{% endblock %}
+
+{# Remove footer #}
+{% block footer %}
+{% endblock %}

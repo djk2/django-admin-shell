@@ -1,0 +1,23 @@
+# directories
+# -----------
+__pycache__/
+build/
+dist/
+.tox/
+eggs/
+.eggs/
+
+# extends
+# --------
+*.pyc
+*.egg-info/
+*.egg
+*.mo
+*.pot
+*.log
+
+# files
+# -----
+.cache
+.env
+pip-log.txt

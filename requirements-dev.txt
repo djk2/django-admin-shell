@@ -1,0 +1,4 @@
+Django>=1.10.5
+tox>=2.5.0
+twine
+flake8

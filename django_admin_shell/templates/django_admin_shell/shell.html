@@ -1,0 +1,73 @@
+{% extends "django_admin_shell/base.html" %}
+
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-xs-4">
+            <h5>
+                <span class="glyphicon glyphicon-list"></span>
+                Output ({{ output|length }}):
+            </h5>
+        </div>
+        <div class="col-xs-4 text-info">
+            <h5> Python version : {{python_version}} </h5>
+        </div>
+        <div class="col-xs-4 text-right">
+            <a class="btn btn-danger btn-sm" id="clear-history" href="{% url "django_admin_shell:shell" %}?clear_history=yes">
+                <span class="glyphicon glyphicon-trash"></span>
+                Clear history
+            </a>
+        </div>
+    </div>
+
+    <div id="output_container">
+        {% for result in output reversed %}
+            <div class="output">
+                <div class="code"><pre>{{ result.code }}</pre></div>
+                <div class="out"><pre class="{{ result.status }}">{{ result.out }}</pre> </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <form id="shell_form" class="form form-horizontal" method="post" action=".">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div style="width:100%">
+                    {{ form.code }}
+                    {% if form.code.errors %}
+                        {{ form.code.errors }}
+                    {% endif %}
+                </div>
+
+                <button id="run_code" type="submit" class="btn btn-success btn-block">
+                    <span class="glyphicon glyphicon-play-circle"></span>
+                    Run code (ctrl + enter)
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-6 text-danger">
+            Be careful, in production environment admin shell is highly dangerous.<br/>
+            Blocking command like <code>input</code> not work.<br/>
+            This code: <code> os.system('vim') </code> will run `vim` in background.<br/>
+        </div>
+        <div class="col-xs-6 text-info">
+            <span class="glyphicon glyphicon-info-sign"></span> Ctrl + Enter : Run code<br/>
+            <span class="glyphicon glyphicon-info-sign"></span> Ctrl + Up/Down : Load code from history<br/>
+            <span class="glyphicon glyphicon-info-sign"></span> Tab : Indent = 4 spaces
+        </div>
+    </div>
+
+{% endblock %}
