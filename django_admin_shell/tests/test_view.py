@@ -42,7 +42,7 @@ class ShellViewTest(TestCase):
         assert response.status_code == 302
 
     def test_shell_notstuff(self):
-        """If user not is stuff then don't have access to shell view"""
+        """If user not is stuff then don"t have access to shell view"""
         response = self.client_auth.get(self.url)
         assert response.status_code == 302
 
@@ -60,7 +60,7 @@ class ShellViewTest(TestCase):
         assert response.status_code == 403
 
         # Test settings.ADMIN_SHELL_ENABLE is False
-        with mock.patch('django_admin_shell.views.ADMIN_SHELL_ENABLE', False):
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_ENABLE", False):
             response = self.client_auth.get(self.url)
             assert response.status_code == 404
 
@@ -80,7 +80,7 @@ class ShellViewTest(TestCase):
 
         # ADMIN_SHELL_ONLY_FOR_SUPERUSER = False
         # User.is_superuser = False
-        with mock.patch('django_admin_shell.views.ADMIN_SHELL_ONLY_FOR_SUPERUSER', False):
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_ONLY_FOR_SUPERUSER", False):
             response = self.client_auth.get(self.url)
             assert response.status_code == 200
 
@@ -113,7 +113,7 @@ class ShellViewTest(TestCase):
 
         # ADMIN_SHELL_ONLY_DEBUG_MODE = False
         # DEBUG = False
-        with mock.patch('django_admin_shell.views.ADMIN_SHELL_ONLY_DEBUG_MODE', False):
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_ONLY_DEBUG_MODE", False):
             response = self.client_auth.get(self.url)
             assert response.status_code == 200
 
@@ -126,49 +126,49 @@ class ShellViewTest(TestCase):
         # First get on admin shell site
         response = self.client_auth.get(self.url)
         assert response.status_code == 200
-        assert response.context['output'] == []
+        assert response.context["output"] == []
         assert ADMIN_SHELL_SESSION_KEY not in self.client_auth.session
 
         # Send simple code nothing to do
-        code = 'a = 1'
-        response = self.client_auth.post(self.url, {'code': code})
+        code = "a = 1"
+        response = self.client_auth.post(self.url, {"code": code})
         session = self.client_auth.session[ADMIN_SHELL_SESSION_KEY]
         assert response.status_code == 302
         assert len(session) == 1
-        assert session[0]['code'] == code
-        assert session[0]['status'] == 'success'
+        assert session[0]["code"] == code
+        assert session[0]["status"] == "success"
 
         # get django admin shell site after run simple code
         response = self.client_auth.get(self.url)
         assert response.status_code == 200
-        assert len(response.context['output']) == 1
-        result = response.context['output'][0]
-        assert result['code'] == code
-        assert result['status'] == 'success'
-        assert result['out'] == ''
+        assert len(response.context["output"]) == 1
+        result = response.context["output"][0]
+        assert result["code"] == code
+        assert result["status"] == "success"
+        assert result["out"] == ""
 
         # Send incorrect python code
-        code = '1/0'
-        response = self.client_auth.post(self.url, {'code': code})
+        code = "1/0"
+        response = self.client_auth.post(self.url, {"code": code})
         session = self.client_auth.session[ADMIN_SHELL_SESSION_KEY]
         assert response.status_code == 302
         assert len(session) == 2
-        assert session[0]['code'] == code
-        assert session[0]['status'] == 'error'
-        assert session[1]['status'] == 'success'
+        assert session[0]["code"] == code
+        assert session[0]["status"] == "error"
+        assert session[1]["status"] == "success"
 
         # get shell site after send incorrect code
         response = self.client_auth.get(self.url)
         assert response.status_code == 200
-        assert len(response.context['output']) == 2
-        result = response.context['output'][0]
-        assert result['code'] == code
-        assert result['status'] == 'error'
-        assert "ZeroDivisionError" in result['out']
+        assert len(response.context["output"]) == 2
+        result = response.context["output"][0]
+        assert result["code"] == code
+        assert result["status"] == "error"
+        assert "ZeroDivisionError" in result["out"]
 
         # Clear all outputs (run history)
-        response = self.client_auth.get(self.url, {'clear_history': 'yes'})
+        response = self.client_auth.get(self.url, {"clear_history": "yes"})
         assert response.status_code == 200
-        assert response.context['output'] == []
+        assert response.context["output"] == []
         assert ADMIN_SHELL_SESSION_KEY in self.client_auth.session
         assert self.client_auth.session[ADMIN_SHELL_SESSION_KEY] == []

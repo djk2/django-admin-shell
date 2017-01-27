@@ -25,7 +25,7 @@
         {% for result in output reversed %}
             <div class="output">
                 <div class="code"><pre>{{ result.code }}</pre></div>
-                <div class="out"><pre class="{{ result.status }}">{{ result.out }}</pre> </div>
+                <div class="out"><pre class="{{ result.status }}">{{ result.out }}</pre></div>
             </div>
         {% endfor %}
     </div>
@@ -59,7 +59,7 @@
 
     <div class="row">
         <div class="col-xs-6 text-danger">
-            Be careful, in production environment admin shell is highly dangerous.<br/>
+            Be careful, in production environment `admin shell` is highly dangerous.<br/>
             Blocking command like <code>input</code> not work.<br/>
             This code: <code> os.system('vim') </code> will run `vim` in background.<br/>
         </div>
