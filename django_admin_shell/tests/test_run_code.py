@@ -81,7 +81,6 @@ class RunCodeTest(TestCase):
         code = "from django_admin_shell.tests.models import TestModel \n"
         code += "print(TestModel.objects.count())"
 
-
         result = run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
