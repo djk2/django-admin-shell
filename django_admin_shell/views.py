@@ -1,3 +1,4 @@
+# encoding: utf-8
 from django.views.generic import FormView
 from .forms import ShellForm
 from django.http import (
@@ -7,9 +8,11 @@ from django.http import (
 from django.conf import settings
 
 try:
-    from io import StringIO
-except:
+    # Only for python 2
     from StringIO import StringIO
+except:
+    # For python 3
+    from io import StringIO
 
 from .settings import (
     ADMIN_SHELL_SESSION_KEY,
