@@ -1,6 +1,9 @@
 django-admin-shell
 ------------------
 
+.. image:: https://badge.fury.io/py/django-admin-shell.svg
+    :target: https://badge.fury.io/py/django-admin-shell
+
 .. image:: https://travis-ci.org/djk2/django-admin-shell.svg?branch=master
     :target: https://travis-ci.org/djk2/django-admin-shell
 
