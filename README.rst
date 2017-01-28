@@ -1,6 +1,11 @@
 django-admin-shell
 ------------------
 
+.. image:: https://requires.io/github/djk2/django-admin-shell/requirements.svg?branch=master
+    :target: https://requires.io/github/djk2/django-admin-shell/requirements/?branch=master
+    :alt: Requirements Status
+
+
 Django application can execute python code in your project's environment on django admin site.
 You can use similar as `python manage shell` without reloading the environment.
 
