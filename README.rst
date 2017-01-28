@@ -1,6 +1,9 @@
 django-admin-shell
 ------------------
 
+.. image:: https://travis-ci.org/djk2/django-admin-shell.svg?branch=master
+    :target: https://travis-ci.org/djk2/django-admin-shell
+
 .. image:: https://requires.io/github/djk2/django-admin-shell/requirements.svg?branch=master
     :target: https://requires.io/github/djk2/django-admin-shell/requirements/?branch=master
     :alt: Requirements Status
