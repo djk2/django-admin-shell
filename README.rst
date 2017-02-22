@@ -41,6 +41,12 @@ Screens
     :alt: Django admin shell view
 
 
+Shell in action
+---------------
+.. image:: https://raw.githubusercontent.com/djk2/django-admin-shell/master/doc/static/youtube.png
+    :target: https://youtu.be/BnP2C3a-2cI
+
+
 
 Install
 --------
