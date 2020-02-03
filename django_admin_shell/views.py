@@ -10,7 +10,7 @@ from django.conf import settings
 try:
     # Only for python 2
     from StringIO import StringIO
-except:
+except ImportError:
     # For python 3
     from io import StringIO
 
@@ -40,7 +40,7 @@ def run_code(code):
     try:
         sys.stdout = buf
         exec(code)
-    except:
+    except Exception:
         out = traceback.format_exc()
         status = 'error'
     else:

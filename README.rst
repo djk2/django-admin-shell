@@ -17,13 +17,15 @@ You can use similar as `python manage shell` without reloading the environment.
 
 
 * Tested by tox with:
-    - Python :2.7, 3.4
-    - Django : 1.9, 1.10, 1.11, 2.0-dev
+    - Python :2.7, 3.6
+    - Django : 1.9, 1.10, 1.11, 2.0, 2.1, 2.2, 3.0
 
 * Require:
     - Django >= 1.9
 
 * Tested on browsers
+    - OK - Chromium 79.0  - Ubuntu 18.04
+    - OK - Firefox 72.0.2 - Ubuntu 18.04
     - OK - Firefox 50.1.0 - Ubuntu 14.04
     - OK - Firefox 31.1 - CentOS 6.4
     - OK - Chromium 53.0 - Ubuntu 14.04
