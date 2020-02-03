@@ -3,19 +3,20 @@ language: python
 
 matrix:
     include:
-        - { python: 3.6, env: py36-dj2.0-test }
-        - { python: 3.6, env: py36-dj2.1-test }
-        - { python: 3.6, env: py36-dj2.2-test }
-        - { python: 3.6, env: py36-dj3.0-test }
-        - { python: 2.7, env: py27-dj1.9-test }
-        - { python: 2.7, env: py27-dj1.10-test }
-        - { python: 2.7, env: py27-dj1.11-test }
-        - { python: 3.6, env: py36-dj1.9-test }
-        - { python: 3.6, env: py36-dj1.10-test }
-        - { python: 3.6, env: py36-dj1.11-test }
-        - { python: 3.6, env: py36-djmaster-test }
-        - { python: 2.7, env: py27-flake }
-        - { python: 3.6, env: py36-flake }
+        - { python: 3.6, env: TOXENV=py36-dj2.0-test }
+        - { python: 3.6, env: TOXENV=py36-dj2.1-test }
+        - { python: 3.6, env: TOXENV=py36-dj2.2-test }
+        - { python: 3.6, env: TOXENV=py36-dj3.0-test }
+        - { python: 2.7, env: TOXENV=py27-dj1.9-test }
+        - { python: 2.7, env: TOXENV=py27-dj1.10-test }
+        - { python: 2.7, env: TOXENV=py27-dj1.11-test }
+        - { python: 3.6, env: TOXENV=py36-dj1.9-test }
+        - { python: 3.6, env: TOXENV=py36-dj1.10-test }
+        - { python: 3.6, env: TOXENV=py36-dj1.11-test }
+        - { python: 3.6, env: TOXENV=py36-djmaster-test }
+        - { python: 2.7, env: TOXENV=py27-flake }
+        - { python: 3.6, env: TOXENV=py36-flake }
+
     allow_failures:
         - env: py36-djmaster-test
 
