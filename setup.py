@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='django-admin-shell',
-    version='0.1.1',
+    version='0.1.2',
     description='',
     url='https://github.com/djk2/django-admin-shell',
     author='Grzegorz Tężycki',

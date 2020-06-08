@@ -1,4 +1,4 @@
-Django>=3.0.3
+Django>=3.0.7
 tox>=2.5.0
 twine
 flake8
