@@ -1,5 +1,15 @@
 # CHANGELOG for django-admin-shell
 
+## 0.2.0 (2021-06-10)
+
+    * Auto import of models and Django tools (like shell_plus).
+      More details in `README.rst` in section about `ADMIN_SHELL_IMPORT_DJANGO` and
+     `ADMIN_SHELL_IMPORT_MODELS` settings - refer to issue #1
+    * Support for Django 3.1
+    * Tests from Python 3.8
+    * Move tests from Travis to GitHub Actions
+    * Django" instead of "Djang" in titlebar - refer to issue #2
+
 ## 0.1.2 (2020-06-08)
 
     * Added MANIFEST.in - Issue #2

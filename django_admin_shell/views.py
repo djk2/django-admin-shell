@@ -1,4 +1,5 @@
 # encoding: utf-8
+from django.apps import apps
 from django.views.generic import FormView
 from .forms import ShellForm
 from django.http import (
@@ -20,40 +21,140 @@ from .settings import (
     ADMIN_SHELL_ENABLE,
     ADMIN_SHELL_ONLY_DEBUG_MODE,
     ADMIN_SHELL_ONLY_FOR_SUPERUSER,
+    ADMIN_SHELL_IMPORT_DJANGO,
+    ADMIN_SHELL_IMPORT_MODELS
 )
 
 import django
+import importlib
 import sys
 import traceback
+import warnings
 
 
-def run_code(code):
-    """
-    Execute code and return result with status = success|error
-    Function manipulate stdout to grab output from exec
-    """
-    status = "success"
-    out = ""
-    tmp_stdout = sys.stdout
-    buf = StringIO()
+class Importer(object):
 
-    try:
-        sys.stdout = buf
-        exec(code)
-    except Exception:
-        out = traceback.format_exc()
-        status = 'error'
-    else:
-        out = buf.getvalue()
-    finally:
-        sys.stdout = tmp_stdout
+    FROM_DJANGO = {
+            'django.db.models': [
+                'Avg',
+                'Case',
+                'Count',
+                'F',
+                'Max',
+                'Min',
+                'Prefetch',
+                'Q',
+                'Sum',
+                'When',
+                'Exists',
+                'OuterRef',
+                'Subquery',
+            ],
+            'django.conf': [
+                'settings',
+            ],
+            'django.core.cache': [
+                'cache',
+            ],
+            'django.contrib.auth': [
+                'get_user_model',
+            ],
+            'django.utils': [
+                'timezone',
+            ],
+            'django.urls': [
+                'reverse'
+            ],
+        }
 
-    result = {
-        'code': code,
-        'out':  out,
-        'status': status,
-    }
-    return result
+    def __init__(self, import_django=None, import_models=None):
+        self.import_django = import_django or ADMIN_SHELL_IMPORT_DJANGO
+        self.import_models = import_models or ADMIN_SHELL_IMPORT_MODELS
+        print ("+++++++++++++++++++++++++++")
+        print (ADMIN_SHELL_IMPORT_DJANGO, ADMIN_SHELL_IMPORT_MODELS)
+        print (self.import_django, self.import_models)
+
+    _mods = None
+
+    def get_modules(self):
+        """
+        Return list of modules and symbols to import
+        """
+        if self._mods is None:
+            self._mods = {}
+            if self.import_django and self.FROM_DJANGO:
+                self._mods.update(self.FROM_DJANGO)
+            if self.import_models:
+                for model_class in apps.get_models():
+                    _mod = model_class.__module__
+                    classes = self._mods.get(_mod, [])
+                    classes.append(model_class.__name__)
+                    self._mods[_mod] = classes
+
+        return self._mods
+
+    _scope = None
+
+    def get_scope(self):
+        """
+        Return map with symbols to module/object
+        Like:
+        "reverse" -> "django.urls.reverse"
+        """
+        if self._scope is None:
+            self._scope = {}
+            for module, symbols in self.get_modules().items():
+                for symbol in symbols:
+                    try:
+                        self._scope[symbol] = getattr(importlib.import_module(module), symbol)
+                    except ImportError as e:
+                        warnings.warn(e.msg, ImportWarning)
+                        continue
+        return self._scope
+
+    def __str__(self):
+        buf = ""
+        for module, symbols in self.get_modules().items():
+            if symbols:
+                buf += "from {mod} import {symbols}\n".format(
+                    mod=module,
+                    symbols=", ".join(symbols)
+                )
+        return buf
+
+
+class Runner(object):
+
+    def __init__(self):
+        self.importer = Importer()
+
+    def run_code(self, code):
+        """
+        Execute code and return result with status = success|error
+        Function manipulate stdout to grab output from exec
+        """
+        status = "success"
+        out = ""
+        tmp_stdout = sys.stdout
+        buf = StringIO()
+
+        try:
+            sys.stdout = buf
+            exec(code, None, self.importer.get_scope())
+        except Exception:
+            out = traceback.format_exc()
+            status = 'error'
+        else:
+            out = buf.getvalue()
+        finally:
+            sys.stdout = tmp_stdout
+
+        result = {
+            'code': code,
+            'out':  out,
+            'status': status,
+        }
+        return result
 
 
 def get_py_version():
@@ -66,6 +167,7 @@ class Shell(FormView):
     template_name = "django_admin_shell/shell.html"
     form_class = ShellForm
     success_url = "."
+    runner = Runner()
 
     # Output - list ran code and results
     # store in session
@@ -117,7 +219,7 @@ class Shell(FormView):
     def form_valid(self, form):
         code = form.cleaned_data.get("code", "")
         if len(code.strip()) > 0:
-            result = run_code(code)
+            result = self.runner.run_code(code)
             self.add_to_outout(result)
             self.save_output()
         return super(Shell, self).form_valid(form)
@@ -125,8 +227,9 @@ class Shell(FormView):
     def get_context_data(self, **kwargs):
         """Add output to context"""
         ctx = super(Shell, self).get_context_data(**kwargs)
-        ctx['site_header'] = "Djang admin shell"
+        ctx['site_header'] = "Django admin shell"
         ctx['has_permission'] = True
         ctx['output'] = self.get_output()
         ctx['python_version'] = get_py_version()
+        ctx['auto_import'] = str(self.runner.importer)
         return ctx

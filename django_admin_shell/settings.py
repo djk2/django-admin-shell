@@ -3,6 +3,7 @@ from django.conf import settings
 
 def from_settings_or_default(name, default):
     """Get attribute from settings by name or return default value"""
+    print (name, getattr(settings, name, default))
     return getattr(settings, name, default)
 
 
@@ -11,3 +12,5 @@ ADMIN_SHELL_ONLY_DEBUG_MODE = from_settings_or_default('ADMIN_SHELL_ONLY_DEBUG_M
 ADMIN_SHELL_ONLY_FOR_SUPERUSER = from_settings_or_default('ADMIN_SHELL_ONLY_FOR_SUPERUSER', True)
 ADMIN_SHELL_OUTPUT_SIZE = from_settings_or_default('ADMIN_SHELL_OUTPUT_SIZE', 250)
 ADMIN_SHELL_SESSION_KEY = from_settings_or_default('ADMIN_SHELL_SESSION_KEY', 'django_admin_shell_output')
+ADMIN_SHELL_IMPORT_DJANGO = from_settings_or_default('ADMIN_SHELL_IMPORT_DJANGO', True)
+ADMIN_SHELL_IMPORT_MODELS = from_settings_or_default('ADMIN_SHELL_IMPORT_MODELS', True)
