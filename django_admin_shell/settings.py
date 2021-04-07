@@ -3,7 +3,6 @@ from django.conf import settings
 
 def from_settings_or_default(name, default):
     """Get attribute from settings by name or return default value"""
-    print (name, getattr(settings, name, default))
     return getattr(settings, name, default)
 
 

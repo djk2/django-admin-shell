@@ -22,7 +22,7 @@ from .settings import (
     ADMIN_SHELL_ONLY_DEBUG_MODE,
     ADMIN_SHELL_ONLY_FOR_SUPERUSER,
     ADMIN_SHELL_IMPORT_DJANGO,
-    ADMIN_SHELL_IMPORT_MODELS
+    ADMIN_SHELL_IMPORT_MODELS,
 )
 
 import django
@@ -70,9 +70,6 @@ class Importer(object):
     def __init__(self, import_django=None, import_models=None):
         self.import_django = import_django or ADMIN_SHELL_IMPORT_DJANGO
         self.import_models = import_models or ADMIN_SHELL_IMPORT_MODELS
-        print ("+++++++++++++++++++++++++++")
-        print (ADMIN_SHELL_IMPORT_DJANGO, ADMIN_SHELL_IMPORT_MODELS)
-        print (self.import_django, self.import_models)
 
     _mods = None
 
