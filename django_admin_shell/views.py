@@ -22,6 +22,7 @@ from .settings import (
     ADMIN_SHELL_ONLY_DEBUG_MODE,
     ADMIN_SHELL_ONLY_FOR_SUPERUSER,
     ADMIN_SHELL_IMPORT_DJANGO,
+    ADMIN_SHELL_IMPORT_DJANGO_MODULES,
     ADMIN_SHELL_IMPORT_MODELS,
 )
 
@@ -34,42 +35,12 @@ import warnings
 
 class Importer(object):
 
-    FROM_DJANGO = {
-            'django.db.models': [
-                'Avg',
-                'Case',
-                'Count',
-                'F',
-                'Max',
-                'Min',
-                'Prefetch',
-                'Q',
-                'Sum',
-                'When',
-                'Exists',
-                'OuterRef',
-                'Subquery',
-            ],
-            'django.conf': [
-                'settings',
-            ],
-            'django.core.cache': [
-                'cache',
-            ],
-            'django.contrib.auth': [
-                'get_user_model',
-            ],
-            'django.utils': [
-                'timezone',
-            ],
-            'django.urls': [
-                'reverse'
-            ],
-        }
-
-    def __init__(self, import_django=None, import_models=None):
+    def __init__(self, import_django=None, import_models=None, extra_imports=None):
         self.import_django = import_django or ADMIN_SHELL_IMPORT_DJANGO
         self.import_models = import_models or ADMIN_SHELL_IMPORT_MODELS
+        self.FROM_DJANGO = ADMIN_SHELL_IMPORT_DJANGO_MODULES
+        if extra_imports is not None and isinstance(extra_imports, dict):
+            self.FROM_DJANGO.update(extra_imports)
 
     _mods = None
 
@@ -79,8 +50,35 @@ class Importer(object):
         """
         if self._mods is None:
             self._mods = {}
+
             if self.import_django and self.FROM_DJANGO:
-                self._mods.update(self.FROM_DJANGO)
+
+                for module_name, symbols in self.FROM_DJANGO.items():
+                    try:
+                        module = importlib.import_module(module_name)
+                    except ImportError as e:
+                        warnings.warn(
+                            "django_admin_shell - autoimport warning :: {msg}".format(
+                                msg=str(e)
+                            ),
+                            ImportWarning
+                        )
+                        continue
+
+                    self._mods[module_name] = []
+                    for symbol_name in symbols:
+                        if hasattr(module, symbol_name):
+                            self._mods[module_name].append(symbol_name)
+                        else:
+                            warnings.warn(
+                                "django_admin_shell - autoimport warning :: "
+                                "AttributeError module '{mod}' has no attribute '{attr}'".format(
+                                    mod=module_name,
+                                    attr=symbol_name
+                                ),
+                                ImportWarning
+                            )
+
             if self.import_models:
                 for model_class in apps.get_models():
                     _mod = model_class.__module__
@@ -100,13 +98,14 @@ class Importer(object):
         """
         if self._scope is None:
             self._scope = {}
-            for module, symbols in self.get_modules().items():
-                for symbol in symbols:
-                    try:
-                        self._scope[symbol] = getattr(importlib.import_module(module), symbol)
-                    except ImportError as e:
-                        warnings.warn(e.msg, ImportWarning)
-                        continue
+            for module_name, symbols in self.get_modules().items():
+                module = importlib.import_module(module_name)
+                for symbol_name in symbols:
+                    self._scope[symbol_name] = getattr(
+                        module,
+                        symbol_name
+                    )
+
         return self._scope
 
     def __str__(self):
@@ -180,11 +179,17 @@ class Shell(FormView):
         if not ADMIN_SHELL_ENABLE:
             return HttpResponseNotFound("Not found: Django admin shell is not enabled")
         elif is_auth is False or request.user.is_staff is False:
-            return HttpResponseForbidden("Forbidden: To access Django admin shell you must have access the admin site")
+            return HttpResponseForbidden(
+                "Forbidden: To access Django admin shell you must have access the admin site"
+            )
         elif ADMIN_SHELL_ONLY_DEBUG_MODE and settings.DEBUG is False:
-            return HttpResponseForbidden("Forbidden :Django admin shell require DEBUG mode")
+            return HttpResponseForbidden(
+                "Forbidden :Django admin shell require DEBUG mode"
+            )
         elif ADMIN_SHELL_ONLY_FOR_SUPERUSER and request.user.is_superuser is False:
-            return HttpResponseForbidden("Forbidden: To access Django admin shell you must be superuser")
+            return HttpResponseForbidden(
+                "Forbidden: To access Django admin shell you must be superuser"
+            )
         return super(Shell, self).dispatch(request, *args, **kwargs)
 
     def get_output(self):
