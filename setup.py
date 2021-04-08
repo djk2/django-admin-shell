@@ -1,5 +1,6 @@
 # encoding:utf-8
 from setuptools import setup, find_packages
+from django_admin_shell import __version__ as version
 
 
 def readme():
@@ -9,7 +10,7 @@ def readme():
 
 setup(
     name='django-admin-shell',
-    version='0.1.2',
+    version=version,
     description='',
     url='https://github.com/djk2/django-admin-shell',
     author='Grzegorz Tężycki',

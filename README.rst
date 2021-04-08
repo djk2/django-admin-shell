@@ -18,10 +18,10 @@ You can use similar as `python manage shell` without reloading the environment.
 
 * Tested by tox with:
     - Python :2.7, 3.6, 3.8
-    - Django : 1.9, 1.10, 1.11, 2.0, 2.1, 2.2, 3.0, 3.1
+    - Django : 1.10, 1.11, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2
 
 * Require:
-    - Django >= 1.9
+    - Django >= 1.10
 
 * Tested on browsers
     - OK - Chromium 89 - Ubuntu 18.04
