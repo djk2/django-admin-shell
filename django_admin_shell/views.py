@@ -158,6 +158,10 @@ def get_py_version():
     return "{0}.{1}.{2}".format(ver.major, ver.minor, ver.micro)
 
 
+def get_dj_version():
+    return django.__version__
+
+
 class Shell(FormView):
 
     template_name = "django_admin_shell/shell.html"
@@ -233,5 +237,6 @@ class Shell(FormView):
         ctx['has_permission'] = True
         ctx['output'] = self.get_output()
         ctx['python_version'] = get_py_version()
+        ctx['django_version'] = get_dj_version()
         ctx['auto_import'] = str(self.runner.importer)
         return ctx
