@@ -1,0 +1,27 @@
+name: UnitTests
+
+on: [push, pull_request]
+
+jobs:
+
+  tests:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.6, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Upgrade PIP
+      run: python -m pip install --upgrade pip
+    - name: Install tox
+      run: python -m pip install --upgrade tox
+    - name: Run tests
+      run: |
+        export PYV="py"`echo "${{ matrix.python-version }}" | tr -d '.'`
+        tox -e `tox -l | grep $PYV | tr "\n" ","`
