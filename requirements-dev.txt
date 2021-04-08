@@ -1,5 +1,5 @@
-Django>=3.0.7
-tox>=2.5.0
+Django>=3.2
+tox>=3.23.0
 twine
 flake8
 mock

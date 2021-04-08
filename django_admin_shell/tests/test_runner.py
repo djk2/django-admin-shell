@@ -1,24 +1,28 @@
 # encoding: utf-8
+import mock
 import django
 from django.test import TestCase
-from django_admin_shell.views import run_code
+from django_admin_shell.views import Runner
 from django_admin_shell.tests.models import TestModel
 
 
-class RunCodeTest(TestCase):
+class RunnerTest(TestCase):
+
+    def setUp(self):
+        self.runner = Runner()
 
     def test_single_code(self):
         """
         Run simple code in pure python
         """
         code = "1 + 1"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == ""
 
         code = "print(1 + 1)"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "2\n"
@@ -32,7 +36,7 @@ class RunCodeTest(TestCase):
         code += "ret = test.pow(2, 10)\n"
         code += "print(ret)"
 
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "1024\n"
@@ -47,13 +51,13 @@ class RunCodeTest(TestCase):
         code += "print(settings.DEBUG)"
 
         # Default in test DEBUG is False
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "False\n"
 
         with self.settings(DEBUG=True):
-            result = run_code(code)
+            result = self.runner.run_code(code)
             assert result["code"] == code
             assert result["status"] == "success"
             assert result["out"] == "True\n"
@@ -61,14 +65,14 @@ class RunCodeTest(TestCase):
         code = "from django.conf import settings\n"
         code += "print(settings.SECRET_KEY)"
 
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
-        assert result["out"] == "{0}\n".format("x" * 55)
+        assert result["out"] == "__secret__key__\n"
 
         code = "import django\n"
         code += "print(django.VERSION)"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "{0}\n".format(str(django.VERSION))
@@ -81,7 +85,7 @@ class RunCodeTest(TestCase):
         code = "from django_admin_shell.tests.models import TestModel \n"
         code += "print(TestModel.objects.count())"
 
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "0\n"
@@ -93,7 +97,7 @@ class RunCodeTest(TestCase):
         code += "test_model2.save() \n"
         code += "print(TestModel.objects.count())"
 
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "2\n"
@@ -105,7 +109,7 @@ class RunCodeTest(TestCase):
         code += "print(test_model.foo) \n"
         code += "test_model.delete()"
 
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "success"
         assert result["out"] == "bar\n"
@@ -116,25 +120,70 @@ class RunCodeTest(TestCase):
         Testing incorect code
         """
         code = "a = 1 / 0"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "error"
         assert "ZeroDivisionError" in result["out"]
 
         code = "a = "
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "error"
         assert "SyntaxError" in result["out"]
 
         code = " a = 1"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "error"
         assert "IndentationError" in result["out"]
 
         code = "raise ValueError"
-        result = run_code(code)
+        result = self.runner.run_code(code)
         assert result["code"] == code
         assert result["status"] == "error"
         assert "ValueError" in result["out"]
+
+    def test_runcode_with_autoimport_django(self):
+        """
+        If ADMIN_SHELL_IMPORT_DJANGO is True then we should have
+        access to call "django.contrib.auth.get_user_model" directly.
+        django.contrib.auth.get_user_model is one of autoimported function
+        """
+        code = "print(get_user_model().__name__)"
+
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_IMPORT_DJANGO", True):
+            runner = Runner()
+            result = runner.run_code(code)
+            assert result["code"] == code
+            assert result["status"] == "success"
+            assert result["out"] == "User\n"
+
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_IMPORT_DJANGO", False):
+            runner = Runner()
+            result = runner.run_code(code)
+            assert result["code"] == code
+            assert result["status"] == "error"
+            assert "NameError: name 'get_user_model' is not defined" in result["out"]
+
+    def test_runcode_with_autoimport_models(self):
+        """
+        If ADMIN_SHELL_IMPORT_MODELS is True then we should have
+        access to call "django_admin_shell.tests.models.TestModel" directly.
+        django.contrib.auth.get_user_model is one of autoimported function
+        """
+        TestModel(foo='foo').save()
+        code = "print(TestModel.objects.count())"
+
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_IMPORT_MODELS", True):
+            runner = Runner()
+            result = runner.run_code(code)
+            assert result["code"] == code
+            assert result["status"] == "success"
+            assert result["out"] == "1\n"
+
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_IMPORT_MODELS", False):
+            runner = Runner()
+            result = runner.run_code(code)
+            assert result["code"] == code
+            assert result["status"] == "error"
+            assert "NameError: name 'TestModel' is not defined" in result["out"]

@@ -1,7 +1,7 @@
 import os
 import django
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+SECRET_KEY = '__secret__key__'
 DEBUG = True
 ALLOWED_HOSTS = []
 

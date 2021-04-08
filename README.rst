@@ -17,13 +17,15 @@ You can use similar as `python manage shell` without reloading the environment.
 
 
 * Tested by tox with:
-    - Python :2.7, 3.6
-    - Django : 1.9, 1.10, 1.11, 2.0, 2.1, 2.2, 3.0
+    - Python :2.7, 3.6, 3.8
+    - Django : 1.10, 1.11, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2
 
 * Require:
-    - Django >= 1.9
+    - Django >= 1.10
 
 * Tested on browsers
+    - OK - Chromium 89 - Ubuntu 18.04
+    - OK - Firefox 87.0 - Ubuntu 18.04
     - OK - Chromium 79.0  - Ubuntu 18.04
     - OK - Firefox 72.0.2 - Ubuntu 18.04
     - OK - Firefox 50.1.0 - Ubuntu 14.04
@@ -100,7 +102,31 @@ Usage
   More about session and how enabling session read here :
   https://docs.djangoproject.com/en/dev/topics/http/sessions/
 
-  Usualy default session in django project is enable
+  Usually default session in django project is enable
+
+Demo
+-----
+
+Try `django-admin-shell` using simple demo app:
+
+1. Clone project
+
+   git clone https://github.com/djk2/django-admin-shell.git
+
+2. Go to `demo` directory:
+
+   cd django-admin-shell/demo
+
+3. Install requirements:
+
+   pip install -r requirements.txt
+
+4. Run demo project
+
+   ./manage.py runserver
+
+5. Go to "http://127.0.0.1:8000/admin/shell" and login to `admin` user with password `admin`
+
 
 Settings
 ---------
@@ -151,6 +177,43 @@ ADMIN_SHELL_SESSION_KEY
 *default* : **django_admin_shell_output**
 
 Name for key in session where is stored history last executed codes.
+
+
+
+ADMIN_SHELL_IMPORT_DJANGO
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*type* : **bool**
+
+*default* : **True**
+
+If flag is set on True, then useful libraries and packages from Django will be automatically imported to shell.
+For example: `from django.conf import settings`, so in shell you have directly access to attributes from
+this module (e.g `settings.INSTALLED_APPS`). List of automatically imported modules is displayed on top of console
+(screen below).
+If you want disable auto import for django packages, set this flag to `False`.
+
+**Nont**: *If during import occurred error `ImportError` then this module will be omitted.*
+
+.. image:: https://raw.githubusercontent.com/djk2/django-admin-shell/master/doc/static/auto_import.png
+    :alt: Auto import section
+
+
+
+ADMIN_SHELL_IMPORT_MODELS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*type* : **bool**
+
+*default* : **True**
+
+This flag is similar to `ADMIN_SHELL_IMPORT_DJANGO` but regarding auto import of models from all registered applications.
+If flag is set on True, then models from all apps will be automatically imported to shell.
+For example: `from django.contrib.auth.models import Permission, Group, User`,
+so in shell you have directly access to this classes.
+List of automatically imported models is displayed on top of console.
+If you want disable auto import for models, set this flag to `False`.
+
+**Nont**: *If during import occurred error `ImportError` then this module will be omitted.*
+
 
 
 Code examples

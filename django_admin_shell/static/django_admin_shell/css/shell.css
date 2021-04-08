@@ -1,3 +1,9 @@
+body {
+    background-color: var(--body-bg);
+    color: var(--body-quiet-color);
+
+}
+
 #content {
     padding : 10px 60px;
 }
