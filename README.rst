@@ -2,10 +2,13 @@ django-admin-shell
 ------------------
 
 .. image:: https://badge.fury.io/py/django-admin-shell.svg
-    :target: https://badge.fury.io/py/django-admin-shell
+    :target: https://pypi.org/project/django-admin-shell/
 
-.. image:: https://travis-ci.org/djk2/django-admin-shell.svg?branch=master
-    :target: https://travis-ci.org/djk2/django-admin-shell
+
+.. image:: https://github.com/djk2/django-admin-shell/actions/workflows/tests.yaml/badge.svg?branch=master
+    :target: https://github.com/djk2/django-admin-shell/actions/workflows/tests.yaml/
+    :alt: GitHub Actions
+
 
 .. image:: https://requires.io/github/djk2/django-admin-shell/requirements.svg?branch=master
     :target: https://requires.io/github/djk2/django-admin-shell/requirements/?branch=master
