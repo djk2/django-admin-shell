@@ -109,6 +109,14 @@ class Importer(object):
 
         return self._scope
 
+    def clear_scope(self):
+        """
+        clear the scope.
+
+        Freeing declared variables to be garbage collected.
+        """
+        self._scope = None
+
     def __str__(self):
         buf = ""
         for module, symbols in self.get_modules().items():
@@ -216,6 +224,8 @@ class Shell(FormView):
     def clear_output(self):
         self.output = []
         self.save_output()
+        if ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY:
+            self.runner.importer.clear_scope()
 
     def get(self, request, *args, **kwargs):
         # Clear output history - set empty list and save
