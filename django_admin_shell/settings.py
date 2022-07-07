@@ -68,3 +68,7 @@ ADMIN_SHELL_IMPORT_MODELS = from_settings_or_default(
     'ADMIN_SHELL_IMPORT_MODELS',
     True
 )
+ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY = from_settings_or_default(
+    'ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY',
+    False
+)
