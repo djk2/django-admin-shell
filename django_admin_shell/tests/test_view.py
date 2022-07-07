@@ -8,7 +8,7 @@ from django.test import (
 )
 
 from django_admin_shell.settings import ADMIN_SHELL_SESSION_KEY
-from django_admin_shell.urls import Shell
+from django_admin_shell.urls import ShellView
 import mock
 
 if django.VERSION < (1, 10):
@@ -36,7 +36,7 @@ class ShellViewTest(TestCase):
         self.client_auth = Client()
         self.client_auth.login(username=username, password=password)
 
-        self.view = Shell()
+        self.view = ShellView()
 
     def test_shell_unauth(self):
         """If user isn't authenticated then should be redirect to login admin site"""
