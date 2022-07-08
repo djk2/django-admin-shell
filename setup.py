@@ -15,7 +15,10 @@ setup(
     url='https://github.com/djk2/django-admin-shell',
     author='Grzegorz Tężycki',
     author_email='grzegorz.tezycki@gmail.com',
-    long_description=readme(),
+    long_description=(
+        """Django application can execute python code in your """
+        """project's environment on django admin site."""
+    ),
     license='MIT',
     packages=find_packages(exclude=['docs']),
     package_data={'django_admin_shell': [
