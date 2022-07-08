@@ -1,5 +1,11 @@
 # CHANGELOG for django-admin-shell
 
+## 1.1.0 (2022-07-02)
+
+    * Added flag `ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY` to
+      to enable the gargabe collector on the declared variables
+      from the shell (author: Rodrigo Castro - rodrigondec)
+
 ## 1.0.0 (2021-06-10)
 
     * Auto import of models and Django tools (like shell_plus).
