@@ -24,6 +24,7 @@ from .settings import (
     ADMIN_SHELL_IMPORT_DJANGO,
     ADMIN_SHELL_IMPORT_DJANGO_MODULES,
     ADMIN_SHELL_IMPORT_MODELS,
+    ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY
 )
 
 import django
@@ -108,6 +109,14 @@ class Importer(object):
 
         return self._scope
 
+    def clear_scope(self):
+        """
+        clear the scope.
+
+        Freeing declared variables to be garbage collected.
+        """
+        self._scope = None
+
     def __str__(self):
         buf = ""
         for module, symbols in self.get_modules().items():
@@ -162,7 +171,7 @@ def get_dj_version():
     return django.__version__
 
 
-class Shell(FormView):
+class ShellView(FormView):
 
     template_name = "django_admin_shell/shell.html"
     form_class = ShellForm
@@ -194,7 +203,7 @@ class Shell(FormView):
             return HttpResponseForbidden(
                 "Forbidden: To access Django admin shell you must be superuser"
             )
-        return super(Shell, self).dispatch(request, *args, **kwargs)
+        return super(ShellView, self).dispatch(request, *args, **kwargs)
 
     def get_output(self):
         if self.output is None:
@@ -215,12 +224,14 @@ class Shell(FormView):
     def clear_output(self):
         self.output = []
         self.save_output()
+        if ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY:
+            self.runner.importer.clear_scope()
 
     def get(self, request, *args, **kwargs):
         # Clear output history - set empty list and save
         if request.GET.get("clear_history", "no") == "yes":
             self.clear_output()
-        return super(Shell, self).get(request, *args, **kwargs)
+        return super(ShellView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         code = form.cleaned_data.get("code", "")
@@ -228,11 +239,11 @@ class Shell(FormView):
             result = self.runner.run_code(code)
             self.add_to_outout(result)
             self.save_output()
-        return super(Shell, self).form_valid(form)
+        return super(ShellView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         """Add output to context"""
-        ctx = super(Shell, self).get_context_data(**kwargs)
+        ctx = super(ShellView, self).get_context_data(**kwargs)
         ctx['site_header'] = "Django admin shell"
         ctx['has_permission'] = True
         ctx['output'] = self.get_output()

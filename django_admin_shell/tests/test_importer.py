@@ -41,10 +41,10 @@ class ImporterTest(TestCase):
     @mock.patch(
         "django_admin_shell.views.ADMIN_SHELL_IMPORT_DJANGO_MODULES",
         {
-            'django_admin_shell.views': ['Importer', 'Runner', 'Shell', 'XYZ'],
+            'django_admin_shell.views': ['Importer', 'Runner', 'ShellView', 'XYZ'],
             'non_exist_mod': ['foo_bar_baz'],
         }
     )
     def test_autoimport_str(self):
         imp = Importer()
-        assert str(imp) == "from django_admin_shell.views import Importer, Runner, Shell\n"
+        assert str(imp) == "from django_admin_shell.views import Importer, Runner, ShellView\n"

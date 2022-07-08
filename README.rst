@@ -218,6 +218,18 @@ If you want disable auto import for models, set this flag to `False`.
 **Nont**: *If during import occurred error `ImportError` then this module will be omitted.*
 
 
+ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*type* : **bool**
+
+*default* : **False**
+
+This flag is used to enable the gargabe collector on the declared variables from the shell execution when the "clear history" is executed.
+If this flag is set to `True`, then all the declared variables will be ERASED and FREED from memory on runtime when "clear history" is used.
+If you want to persist indefinitly all declared variables on the shell, set this flag to `False`.
+
+**BEWARE**: *leaving this disabled is not recomended on production code!*
+
 
 Code examples
 -------------

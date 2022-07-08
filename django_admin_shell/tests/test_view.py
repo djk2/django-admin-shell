@@ -8,6 +8,7 @@ from django.test import (
 )
 
 from django_admin_shell.settings import ADMIN_SHELL_SESSION_KEY
+from django_admin_shell.urls import ShellView
 import mock
 
 if django.VERSION < (1, 10):
@@ -34,6 +35,8 @@ class ShellViewTest(TestCase):
 
         self.client_auth = Client()
         self.client_auth.login(username=username, password=password)
+
+        self.view = ShellView()
 
     def test_shell_unauth(self):
         """If user isn't authenticated then should be redirect to login admin site"""
@@ -137,6 +140,7 @@ class ShellViewTest(TestCase):
         assert len(session) == 1
         assert session[0]["code"] == code
         assert session[0]["status"] == "success"
+        assert 'a' in self.view.runner.importer.get_scope()
 
         # get django admin shell site after run simple code
         response = self.client_auth.get(self.url)
@@ -172,3 +176,35 @@ class ShellViewTest(TestCase):
         assert response.context["output"] == []
         assert ADMIN_SHELL_SESSION_KEY in self.client_auth.session
         assert self.client_auth.session[ADMIN_SHELL_SESSION_KEY] == []
+        assert 'a' in self.view.runner.importer.get_scope()
+
+    @override_settings(DEBUG=True)
+    def test_clear_scope(self):
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save()
+
+        # First get on admin shell site
+        response = self.client_auth.get(self.url)
+        assert response.status_code == 200
+        assert response.context["output"] == []
+        assert ADMIN_SHELL_SESSION_KEY not in self.client_auth.session
+
+        # Send simple code that defined a variable
+        code = "a = 1"
+        response = self.client_auth.post(self.url, {"code": code})
+        session = self.client_auth.session[ADMIN_SHELL_SESSION_KEY]
+        assert response.status_code == 302
+        assert len(session) == 1
+        assert session[0]["code"] == code
+        assert session[0]["status"] == "success"
+        assert 'a' in self.view.runner.importer.get_scope()
+
+        # Clear all outputs (run history) with clear scope
+        with mock.patch("django_admin_shell.views.ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY", True):
+            response = self.client_auth.get(self.url, {"clear_history": "yes"})
+        assert response.status_code == 200
+        assert response.context["output"] == []
+        assert ADMIN_SHELL_SESSION_KEY in self.client_auth.session
+        assert self.client_auth.session[ADMIN_SHELL_SESSION_KEY] == []
+        assert 'a' not in self.view.runner.importer.get_scope()
