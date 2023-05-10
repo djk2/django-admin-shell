@@ -1,5 +1,14 @@
 # CHANGELOG for django-admin-shell
 
+## 2.0.0 (2023-05-10)
+
+    * Support for Django 4.0 and Django 4.2
+    * Tests for Python 3.10
+    * Replaced test via tox from Python 3.6 to 3.7
+    * Verified support for latest webbrowsers
+    * Drop support for Django 1.10 and 1.11
+    * Drop support for Python 2.7
+
 ## 1.1.0 (2022-07-02)
 
     * Added flag `ADMIN_SHELL_CLEAR_SCOPE_ON_CLEAR_HISTORY` to
@@ -14,7 +23,7 @@
     * Support for Django 3.1 and Django 3.2
     * Tests for Python 3.8
     * Django" instead of "Djang" in titlebar - refer to issue #2
-    * Droop support for Django 1.9
+    * Drop support for Django 1.9
     * Remove integration with Travis
 
 ## 0.1.2 (2020-06-08)

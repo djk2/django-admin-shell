@@ -20,13 +20,15 @@ You can use similar as `python manage shell` without reloading the environment.
 
 
 * Tested by tox with:
-    - Python :2.7, 3.6, 3.8
-    - Django : 1.10, 1.11, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2
+    - Python : 3.7, 3.8, 3.10
+    - Django : 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.2
 
 * Require:
     - Django >= 1.10
 
 * Tested on browsers
+    - OK - Chromium  108 - Ubuntu 20.04
+    - OK - Firefox 112.0.2 - Ubuntu 20.04
     - OK - Chromium 89 - Ubuntu 18.04
     - OK - Firefox 87.0 - Ubuntu 18.04
     - OK - Chromium 79.0  - Ubuntu 18.04
@@ -86,9 +88,9 @@ Install
  *urls.py* ::
 
     urlpatterns = [
-        url(r'^admin/shell/', include('django_admin_shell.urls')),
+        re_path(r'^admin/shell/', include('django_admin_shell.urls')),
         ...
-        url(r'^admin/', admin.site.urls),
+        re_path(r'^admin/', admin.site.urls),
     ]
 
 
