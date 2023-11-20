@@ -1,5 +1,9 @@
 # CHANGELOG for django-admin-shell
 
+## 2.0.1 (2023-11-20)
+
+    * Add missing `bootstrap.min.css.map` file - refer to issue #8
+
 ## 2.0.0 (2023-05-10)
 
     * Support for Django 4.0 and Django 4.2
